@@ -2,33 +2,25 @@ package trivia.models;
 
 import lombok.Data;
 
-/**
- * The Player class represents player
- * for Trivia quiz.
- *
- * @author Igor Radovanovic
- * @version 1.0
- * @since 2022-02-24
- */
+
 @Data
 public class Player {
 
+    private long id;
     private final String name;
-    private int place = 0; //default je 0
-    private int coins = 0;
-    private boolean inPenaltyBox = false;
+    private int place;
+    private int coins;
+    private boolean inPenaltyBox;
 
     public Player(String name) {
         this.name = name;
     }
 
-    /**
-     * Constructor is filling up Map with dummy values for the questions
-     */
-    public void move(int roll) {
-        place += roll;
-        if (place > 11) {
-            place -= 12;   //12 - MAGIC NUMBER? Where it belongs? Who should know about exact number of places on board?
-        }
+    public void move(int steps) {
+        place += steps;
+    }
+
+    public void addCoins() {
+        coins += 1;
     }
 }

@@ -18,6 +18,7 @@ public class GameBetter implements IGame {
     QuestionCategory category;
 
     int currentPlayerIndex = 0;
+    int maxGameSteps = 12;
     boolean isGettingOutOfPenaltyBox = true;
 
     public GameBetter() {
@@ -47,7 +48,8 @@ public class GameBetter implements IGame {
             return checkIfIsGettingOut(currentPlayer);
         } else {
             log("Answer was correct!!!!");
-            addCoinsToPurse(currentPlayer);
+            currentPlayer.addCoins();
+            log(currentPlayer.getName() + " now has " + currentPlayer.getCoins() + " Gold Coins.");
             gameFinished = !isGameFinished(currentPlayer);
             nextPlayer();
             return gameFinished;
@@ -64,16 +66,10 @@ public class GameBetter implements IGame {
     }
 
 
-    /**
-     * This method checks if Players has 6 gold coins
-     */
     private boolean isGameFinished(Player currentPlayer) {
         return currentPlayer.getCoins() == 6;
     }
 
-    /**
-     * This method moves to the next Player
-     */
     private void nextPlayer() {
         currentPlayerIndex++;
         if (currentPlayerIndex == players.size()) {
@@ -90,17 +86,11 @@ public class GameBetter implements IGame {
         return players.size() >= 2;
     }
 
-    //Who's responsible for managing (adding in this case) Player's coins? Violated https://martinfowler.com/bliki/TellDontAsk.html
-    private void addCoinsToPurse(Player currentPlayer) {
-        int coins = currentPlayer.getCoins() + 1;
-        currentPlayer.setCoins(coins);
-        log(currentPlayer.getName() + " now has " + currentPlayer.getCoins() + " Gold Coins.");
-    }
-
     private boolean checkIfIsGettingOut(Player player) {
         if (isGettingOutOfPenaltyBox) {
             log("Answer was correct!!!!");
-            addCoinsToPurse(player);
+            player.addCoins();
+            log(player.getName() + " now has " + player.getCoins() + " Gold Coins.");
             boolean gameFinished = !isGameFinished(player);
             nextPlayer();
             return gameFinished;
@@ -118,7 +108,7 @@ public class GameBetter implements IGame {
     //the rule for getting out of jail (even or odd number)
     //specific of tracking active player, (index and that they are stored in players)
     //details of getting current category, that it is stored in questions, and picked by place of a current player
-    //TODO
+    //TODO add Jail class
     //try moving some of these things to its own methods, or its own classes
     //can you spot what's one class that's missing here (hint: it is in the picture)
     private void play(int roll) {
@@ -133,6 +123,9 @@ public class GameBetter implements IGame {
             return;
         }
         currentPlayer.move(roll);
+        if (currentPlayer.getPlace() > 11) {
+            currentPlayer.setPlace(currentPlayer.getPlace() - maxGameSteps);
+        }
         category = questions.getCurrentCategory(currentPlayer.getPlace());
         log(currentPlayer.getName() + "'s new location is " + currentPlayer.getPlace());
         askQuestion(category);
@@ -153,6 +146,9 @@ public class GameBetter implements IGame {
         isGettingOutOfPenaltyBox = true;
         log(player.getName() + " is getting out of the penalty box");
         player.move(roll);
+        if (player.getPlace() > 11) {
+            player.setPlace(player.getPlace() - maxGameSteps);
+        }
         category = questions.getCurrentCategory(player.getPlace());
         log(player.getName() + "'s new location is " + player.getPlace());
         askQuestion(category);
