@@ -11,11 +11,12 @@ import java.util.List;
 import static trivia.util.CustomLogger.log;
 
 // REFACTORED
-//missed two important abstractions:
+//missed two important abstractions: Jail and probably Place?
 public class GameBetter implements IGame {
     List<Player> players = new ArrayList<>();
     Questions questions;
     QuestionCategory category;
+    Jail jail;
 
     int currentPlayerIndex = 0;
     int maxGameSteps = 12;
@@ -23,6 +24,7 @@ public class GameBetter implements IGame {
 
     public GameBetter() {
         this.questions = new Questions();
+        this.jail = new Jail();
     }
 
     public boolean add(String playerName) {
@@ -60,7 +62,7 @@ public class GameBetter implements IGame {
         Player currentPlayer = players.get(currentPlayerIndex);
         currentPlayer.setInPenaltyBox(true);
         log("Question was incorrectly answered");
-        log(currentPlayer.getName() + " was sent to the penalty box");
+        jail.addPrisoner(currentPlayer);
         nextPlayer();
         return true;
     }
@@ -100,57 +102,40 @@ public class GameBetter implements IGame {
         }
     }
 
-    private boolean isRolledNumberEven(int roll) {
-        return roll % 2 == 0;
-    }
 
     //consider all the knowledge it has:
     //the rule for getting out of jail (even or odd number)
     //specific of tracking active player, (index and that they are stored in players)
     //details of getting current category, that it is stored in questions, and picked by place of a current player
-    //TODO add Jail class
+    //TODO
     //try moving some of these things to its own methods, or its own classes
-    //can you spot what's one class that's missing here (hint: it is in the picture)
+    //can you spot what's one class that's missing here (hint: it is in the picture) Jail
     private void play(int roll) {
 
-        boolean moveFromJail = !isRolledNumberEven(roll);
         Player currentPlayer = players.get(currentPlayerIndex);
         log(currentPlayer.getName() + " is the current player");
         log("They have rolled a " + roll);
 
-        if (currentPlayer.isInPenaltyBox()) {
-            jailAction(currentPlayer, roll, moveFromJail);
+        if (!currentPlayer.isInPenaltyBox()) {
+            nextStep(currentPlayer,roll);
             return;
         }
-        currentPlayer.move(roll);
-        if (currentPlayer.getPlace() > 11) {
-            currentPlayer.setPlace(currentPlayer.getPlace() - maxGameSteps);
+
+        isGettingOutOfPenaltyBox = false;
+
+        if(jail.tryToGetOut(currentPlayer,roll)){
+            isGettingOutOfPenaltyBox = true;
+            nextStep(currentPlayer,roll);
         }
-        category = questions.getCurrentCategory(currentPlayer.getPlace());
-        log(currentPlayer.getName() + "'s new location is " + currentPlayer.getPlace());
-        askQuestion(category);
 
     }
 
-    //not descriptive name
-    //one would expect that Jail has to do with Jail responsibilities,
-    //   not moving player on the board or pulling question from the deck
-    private void jailAction(Player player, int roll, boolean moveFromJail) {
-
-        if (!moveFromJail) {
-            log(player.getName() + " is not getting out of the penalty box");
-            isGettingOutOfPenaltyBox = false;
-            return;
-        }
-
-        isGettingOutOfPenaltyBox = true;
-        log(player.getName() + " is getting out of the penalty box");
+    private void nextStep(Player player, int roll){
         player.move(roll);
-        if (player.getPlace() > 11) {
-            player.setPlace(player.getPlace() - maxGameSteps);
-        }
+        player.checkPosition(maxGameSteps);
         category = questions.getCurrentCategory(player.getPlace());
         log(player.getName() + "'s new location is " + player.getPlace());
         askQuestion(category);
     }
+
 }

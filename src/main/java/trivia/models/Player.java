@@ -23,4 +23,16 @@ public class Player {
     public void addCoins() {
         coins += 1;
     }
+
+    public void checkPosition(int max){
+
+            if (place > 11) {
+                place -= max;
+            }
+        }
+
+
+    public String toString(){
+        return this.name;
+    }
 }
