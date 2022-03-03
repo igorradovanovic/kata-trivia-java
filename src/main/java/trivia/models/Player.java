@@ -14,7 +14,7 @@ import lombok.Data;
 public class Player {
 
     private final String name;
-    private int place = 0;
+    private int place = 0; //default je 0
     private int coins = 0;
     private boolean inPenaltyBox = false;
 
@@ -28,7 +28,7 @@ public class Player {
     public void move(int roll) {
         place += roll;
         if (place > 11) {
-            place -= 12;
+            place -= 12;   //12 - MAGIC NUMBER? Where it belongs? Who should know about exact number of places on board?
         }
     }
 }

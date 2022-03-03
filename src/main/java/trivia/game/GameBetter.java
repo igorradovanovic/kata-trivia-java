@@ -11,6 +11,7 @@ import java.util.List;
 import static trivia.util.CustomLogger.log;
 
 // REFACTORED
+//missed two important abstractions:
 public class GameBetter implements IGame {
     List<Player> players = new ArrayList<>();
     Questions questions;
@@ -89,6 +90,7 @@ public class GameBetter implements IGame {
         return players.size() >= 2;
     }
 
+    //Who's responsible for managing (adding in this case) Player's coins? Violated https://martinfowler.com/bliki/TellDontAsk.html
     private void addCoinsToPurse(Player currentPlayer) {
         int coins = currentPlayer.getCoins() + 1;
         currentPlayer.setCoins(coins);
@@ -112,6 +114,13 @@ public class GameBetter implements IGame {
         return roll % 2 == 0;
     }
 
+    //consider all the knowledge it has:
+    //the rule for getting out of jail (even or odd number)
+    //specific of tracking active player, (index and that they are stored in players)
+    //details of getting current category, that it is stored in questions, and picked by place of a current player
+    //TODO
+    //try moving some of these things to its own methods, or its own classes
+    //can you spot what's one class that's missing here (hint: it is in the picture)
     private void play(int roll) {
 
         boolean moveFromJail = !isRolledNumberEven(roll);
@@ -130,6 +139,9 @@ public class GameBetter implements IGame {
 
     }
 
+    //not descriptive name
+    //one would expect that Jail has to do with Jail responsibilities,
+    //   not moving player on the board or pulling question from the deck
     private void jailAction(Player player, int roll, boolean moveFromJail) {
 
         if (!moveFromJail) {

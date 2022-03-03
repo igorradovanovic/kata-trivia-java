@@ -17,6 +17,9 @@ import java.util.Map;
  */
 public class Questions {
 
+    //missing abstractions: Questions are grouped in Decks where every Deck is of specific Category
+    //present that in code
+
     private final Map<QuestionCategory, List<String>> questions = new HashMap<>();
 
     /**
@@ -26,6 +29,7 @@ public class Questions {
         for (QuestionCategory questionCategory : QuestionCategory.values()) {
             questions.put(questionCategory, new ArrayList<>());
         }
+        //50 MAGIC NUMBER, who should tell how many questions are in the game?
         for (int i = 0; i < 50; i++) {
             questions.get(QuestionCategory.POP).add("Pop Question " + i);
             questions.get(QuestionCategory.SCIENCE).add("Science Question " + i);
@@ -48,6 +52,9 @@ public class Questions {
     /**
      * This method checks for the CategoryType
      */
+    //Misplaced responsibility. In reality, game has a board too and board has the knowledge about its places
+    //and categories they belong to
+    //Try to present it in code
     public QuestionCategory getCurrentCategory(int step) {
         if (step == 0 || step == 4 || step == 8) {
             return QuestionCategory.POP;
