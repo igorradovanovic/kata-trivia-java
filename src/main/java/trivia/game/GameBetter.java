@@ -11,20 +11,20 @@ import java.util.List;
 import static trivia.util.CustomLogger.log;
 
 // REFACTORED
-//missed two important abstractions: Jail and probably Place?
 public class GameBetter implements IGame {
     List<Player> players = new ArrayList<>();
     Questions questions;
     QuestionCategory category;
     Jail jail;
+    Board board;
 
     int currentPlayerIndex = 0;
-    int maxGameSteps = 12;
     boolean isGettingOutOfPenaltyBox = true;
 
     public GameBetter() {
         this.questions = new Questions();
         this.jail = new Jail();
+        this.board = new Board();
     }
 
     public boolean add(String playerName) {
@@ -121,19 +121,20 @@ public class GameBetter implements IGame {
             return;
         }
 
-        isGettingOutOfPenaltyBox = false;
 
         if(jail.tryToGetOut(currentPlayer,roll)){
             isGettingOutOfPenaltyBox = true;
             nextStep(currentPlayer,roll);
+        }else {
+            isGettingOutOfPenaltyBox = false;
         }
 
     }
 
     private void nextStep(Player player, int roll){
         player.move(roll);
-        player.checkPosition(maxGameSteps);
-        category = questions.getCurrentCategory(player.getPlace());
+        player.checkPosition(Board.PLACES);
+        category = board.getCurrentCategory(player.getPlace());
         log(player.getName() + "'s new location is " + player.getPlace());
         askQuestion(category);
     }
