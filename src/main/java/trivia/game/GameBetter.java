@@ -2,35 +2,29 @@ package trivia.game;
 
 
 import trivia.models.Player;
-import trivia.models.Questions;
 import trivia.types.QuestionCategory;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import static trivia.util.CustomLogger.log;
 
 // REFACTORED
 public class GameBetter implements IGame {
-    List<Player> players = new ArrayList<>();
-    Questions questions;
+    public static final int WINNING_COINS = 6;
+    public static final int QUESTIONS_NUMBER = 50;
+    QuestionManagement questions = new QuestionManagement();
     QuestionCategory category;
-    Jail jail;
-    Board board;
+    Jail jail = new Jail();
+    Board board = new Board();
+    PlayerManagement players = new PlayerManagement();
 
-    int currentPlayerIndex = 0;
     boolean isGettingOutOfPenaltyBox = true;
 
     public GameBetter() {
-        this.questions = new Questions();
-        this.jail = new Jail();
-        this.board = new Board();
+        this.questions.generateRandom(QUESTIONS_NUMBER);
     }
 
     public boolean add(String playerName) {
-        players.add(new Player(playerName));
+        players.addOne(new Player(playerName));
         log(playerName + " was added");
-        log("They are player number " + players.size());
+        log("They are player number " + players.totalNumber());
         return true;
     }
 
@@ -44,7 +38,7 @@ public class GameBetter implements IGame {
 
 
     public boolean wasCorrectlyAnswered() {
-        Player currentPlayer = players.get(currentPlayerIndex);
+        Player currentPlayer = players.getActive();
         boolean gameFinished;
         if (currentPlayer.isInPenaltyBox()) {
             return checkIfIsGettingOut(currentPlayer);
@@ -53,30 +47,23 @@ public class GameBetter implements IGame {
             currentPlayer.addCoins();
             log(currentPlayer.getName() + " now has " + currentPlayer.getCoins() + " Gold Coins.");
             gameFinished = !isGameFinished(currentPlayer);
-            nextPlayer();
+            players.nextPlayer();
             return gameFinished;
         }
     }
 
     public boolean wrongAnswer() {
-        Player currentPlayer = players.get(currentPlayerIndex);
+        Player currentPlayer = players.getActive();
         currentPlayer.setInPenaltyBox(true);
         log("Question was incorrectly answered");
         jail.addPrisoner(currentPlayer);
-        nextPlayer();
+        players.nextPlayer();
         return true;
     }
 
 
     private boolean isGameFinished(Player currentPlayer) {
-        return currentPlayer.getCoins() == 6;
-    }
-
-    private void nextPlayer() {
-        currentPlayerIndex++;
-        if (currentPlayerIndex == players.size()) {
-            currentPlayerIndex = 0;
-        }
+        return currentPlayer.getCoins() == WINNING_COINS;
     }
 
     private void askQuestion(QuestionCategory category) {
@@ -85,7 +72,7 @@ public class GameBetter implements IGame {
     }
 
     private boolean isPlayable() {
-        return players.size() >= 2;
+        return players.totalNumber() >= 2;
     }
 
     private boolean checkIfIsGettingOut(Player player) {
@@ -94,10 +81,10 @@ public class GameBetter implements IGame {
             player.addCoins();
             log(player.getName() + " now has " + player.getCoins() + " Gold Coins.");
             boolean gameFinished = !isGameFinished(player);
-            nextPlayer();
+            players.nextPlayer();
             return gameFinished;
         } else {
-            nextPlayer();
+            players.nextPlayer();
             return true;
         }
     }
@@ -112,7 +99,7 @@ public class GameBetter implements IGame {
     //can you spot what's one class that's missing here (hint: it is in the picture) Jail
     private void play(int roll) {
 
-        Player currentPlayer = players.get(currentPlayerIndex);
+        Player currentPlayer = players.getActive();
         log(currentPlayer.getName() + " is the current player");
         log("They have rolled a " + roll);
 
