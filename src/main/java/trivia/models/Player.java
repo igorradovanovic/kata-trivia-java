@@ -10,7 +10,6 @@ public class Player {
     private final String name;
     private int place;
     private int coins;
-    private boolean inPenaltyBox;
 
     public Player(String name) {
         this.name = name;
@@ -30,7 +29,6 @@ public class Player {
                 place -= max;
             }
         }
-
 
     public String toString(){
         return this.name;

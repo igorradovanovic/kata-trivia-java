@@ -33,11 +33,11 @@ public class GameBetter implements IGame {
         play(roll);
     }
 
-
     public boolean wasCorrectlyAnswered() {
         Player currentPlayer = players.getActive();
         boolean gameFinished;
-        if (currentPlayer.isInPenaltyBox()) {
+
+        if (jail.hasImprisoned(currentPlayer)) {
             return checkIfIsGettingOut(currentPlayer);
         } else {
             log("Answer was correct!!!!");
@@ -51,7 +51,6 @@ public class GameBetter implements IGame {
 
     public boolean wrongAnswer() {
         Player currentPlayer = players.getActive();
-        currentPlayer.setInPenaltyBox(true);
         log("Question was incorrectly answered");
         jail.addPrisoner(currentPlayer);
         players.nextPlayer();
@@ -74,6 +73,7 @@ public class GameBetter implements IGame {
     private boolean checkIfIsGettingOut(Player player) {
         if (jail.isPlayerIsGettingOut()) {
             log("Answer was correct!!!!");
+            jail.removePrisoner(player);
             player.addCoins();
             log(player.getName() + " now has " + player.getCoins() + " Gold Coins.");
             boolean gameFinished = !isGameFinished(player);
@@ -92,13 +92,14 @@ public class GameBetter implements IGame {
         log(currentPlayer.getName() + " is the current player");
         log("They have rolled a " + roll);
 
-        if (!currentPlayer.isInPenaltyBox()) {
+        if (!jail.hasImprisoned(currentPlayer)) {
             nextStep(currentPlayer,roll);
             return;
         }
 
-
         if(jail.tryToGetOut(currentPlayer,roll)){
+
+            log(currentPlayer.getName() + " is getting out of the penalty box");
             nextStep(currentPlayer,roll);
         }
 

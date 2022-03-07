@@ -31,7 +31,6 @@ public class Jail {
 
     public boolean tryToGetOut(Player player, int roll) {
         if (this.releaseCondition(roll)) {
-            this.removePrisoner(player);
             this.playerIsGettingOut = true;
             return true;
         } else {
