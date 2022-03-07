@@ -10,7 +10,6 @@ public class GameBetter implements IGame {
     public static final int WINNING_COINS = 6;
     public static final int QUESTIONS_NUMBER = 50;
     QuestionManagement questions = new QuestionManagement();
-    QuestionCategory category;
     Jail jail = new Jail();
     Board board = new Board();
     PlayerManagement players = new PlayerManagement();
@@ -60,7 +59,6 @@ public class GameBetter implements IGame {
         players.nextPlayer();
         return true;
     }
-
 
     private boolean isGameFinished(Player currentPlayer) {
         return currentPlayer.getCoins() == WINNING_COINS;
@@ -121,9 +119,8 @@ public class GameBetter implements IGame {
     private void nextStep(Player player, int roll){
         player.move(roll);
         player.checkPosition(Board.PLACES);
-        category = board.getCurrentCategory(player.getPlace());
         log(player.getName() + "'s new location is " + player.getPlace());
-        askQuestion(category);
+        askQuestion(board.getCurrentCategory(player.getPlace()));
     }
 
 }
