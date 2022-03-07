@@ -14,8 +14,6 @@ public class GameBetter implements IGame {
     Board board = new Board();
     PlayerManagement players = new PlayerManagement();
 
-    boolean isGettingOutOfPenaltyBox = true;
-
     public GameBetter() {
         this.questions.generateRandom(QUESTIONS_NUMBER);
     }
@@ -74,7 +72,7 @@ public class GameBetter implements IGame {
     }
 
     private boolean checkIfIsGettingOut(Player player) {
-        if (isGettingOutOfPenaltyBox) {
+        if (jail.isPlayerIsGettingOut()) {
             log("Answer was correct!!!!");
             player.addCoins();
             log(player.getName() + " now has " + player.getCoins() + " Gold Coins.");
@@ -87,14 +85,7 @@ public class GameBetter implements IGame {
         }
     }
 
-
-    //consider all the knowledge it has:
-    //the rule for getting out of jail (even or odd number)
-    //specific of tracking active player, (index and that they are stored in players)
-    //details of getting current category, that it is stored in questions, and picked by place of a current player
-    //TODO
-    //try moving some of these things to its own methods, or its own classes
-    //can you spot what's one class that's missing here (hint: it is in the picture) Jail
+    //TODO refactor
     private void play(int roll) {
 
         Player currentPlayer = players.getActive();
@@ -108,10 +99,7 @@ public class GameBetter implements IGame {
 
 
         if(jail.tryToGetOut(currentPlayer,roll)){
-            isGettingOutOfPenaltyBox = true;
             nextStep(currentPlayer,roll);
-        }else {
-            isGettingOutOfPenaltyBox = false;
         }
 
     }

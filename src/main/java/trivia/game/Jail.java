@@ -13,6 +13,7 @@ import static trivia.util.CustomLogger.log;
 public class Jail {
 
     private Set<Player> prisoners = new HashSet<>();
+    private boolean playerIsGettingOut;
 
     public boolean hasImprisoned(Player player) {
         return prisoners.contains(player);
@@ -31,9 +32,11 @@ public class Jail {
     public boolean tryToGetOut(Player player, int roll) {
         if (this.releaseCondition(roll)) {
             this.removePrisoner(player);
+            this.playerIsGettingOut = true;
             return true;
         } else {
             log(player + " is not getting out of the penalty box");
+            this.playerIsGettingOut = false;
             return false;
         }
     }
