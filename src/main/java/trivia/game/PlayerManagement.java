@@ -1,24 +1,27 @@
 package trivia.game;
 
 import trivia.models.Player;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerManagement {
 
     private Player active;
-
+    private long id = 1;
     private List<Player> players = new ArrayList<>();
 
     public void addOne(Player player){
-        if(active == null){
-            active = player;
-        }
+        player.setId(id);
         players.add(player);
+        id++;
     }
 
-    public Player getActive() { // how about "getCurrentPlayer()" ?
+    public Player getCurrentPlayer() {
+        checkId();
+        players.stream()
+                .forEach(player->{
+                    if(player.getId() == id) active = player;
+                });
         return active;
     }
 
@@ -27,11 +30,14 @@ public class PlayerManagement {
     }
 
     public void nextPlayer() {
-        int activePlayerIndex = players.indexOf(active);
-        if (activePlayerIndex == totalNumber() - 1) {
-            active = players.get(0);
-        } else {
-            active = players.get(activePlayerIndex + 1);
-        }
+        id++;
+        players.stream()
+                .forEach(player -> {
+                    if(player.getId() == id) active = player;
+                });
+    }
+
+    private long checkId(){
+        return id > totalNumber() ? id = 1 : id;
     }
 }

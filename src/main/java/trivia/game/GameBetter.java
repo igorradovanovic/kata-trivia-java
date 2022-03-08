@@ -3,6 +3,7 @@ package trivia.game;
 
 import trivia.models.Player;
 import trivia.types.QuestionCategory;
+
 import static trivia.util.CustomLogger.log;
 
 // REFACTORED
@@ -34,7 +35,7 @@ public class GameBetter implements IGame {
     }
 
     public boolean wasCorrectlyAnswered() {
-        Player currentPlayer = players.getActive();
+        Player currentPlayer = players.getCurrentPlayer();
         boolean gameFinished;
 
         if (jail.hasImprisoned(currentPlayer)) {
@@ -50,7 +51,7 @@ public class GameBetter implements IGame {
     }
 
     public boolean wrongAnswer() {
-        Player currentPlayer = players.getActive();
+        Player currentPlayer = players.getCurrentPlayer();
         log("Question was incorrectly answered");
         jail.addPrisoner(currentPlayer);
         players.nextPlayer();
@@ -85,31 +86,26 @@ public class GameBetter implements IGame {
         }
     }
 
-    //TODO refactor
     private void play(int roll) {
 
-        Player currentPlayer = players.getActive();
+        Player currentPlayer = players.getCurrentPlayer();
         log(currentPlayer.getName() + " is the current player");
         log("They have rolled a " + roll);
 
         if (!jail.hasImprisoned(currentPlayer)) {
-            nextStep(currentPlayer,roll);
+            nextStep(currentPlayer, roll);
             return;
         }
-
-        if(jail.tryToGetOut(currentPlayer,roll)){
-
+        if (jail.tryToGetOut(currentPlayer, roll)) {
             log(currentPlayer.getName() + " is getting out of the penalty box");
-            nextStep(currentPlayer,roll);
+            nextStep(currentPlayer, roll);
         }
-
     }
 
-    private void nextStep(Player player, int roll){
+    private void nextStep(Player player, int roll) {
         player.move(roll);
         player.checkPosition(Board.PLACES);
         log(player.getName() + "'s new location is " + player.getPlace());
         askQuestion(board.getCurrentCategory(player.getPlace()));
     }
-
 }
