@@ -1,10 +1,11 @@
-package trivia;
+package trivia.game;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-// REFACTOR ME
-public class GameBetter implements IGame {
+
+// TODO refactor me
+public class Game implements IGame {
    ArrayList players = new ArrayList();
    int[] places = new int[6];
    int[] purses = new int[6];
@@ -18,7 +19,7 @@ public class GameBetter implements IGame {
    int currentPlayer = 0;
    boolean isGettingOutOfPenaltyBox;
 
-   public GameBetter() {
+   public Game() {
       for (int i = 0; i < 50; i++) {
          popQuestions.addLast("Pop Question " + i);
          scienceQuestions.addLast(("Science Question " + i));
@@ -36,6 +37,8 @@ public class GameBetter implements IGame {
    }
 
    public boolean add(String playerName) {
+
+
       players.add(playerName);
       places[howManyPlayers()] = 0;
       purses[howManyPlayers()] = 0;
@@ -120,7 +123,7 @@ public class GameBetter implements IGame {
                                + " now has "
                                + purses[currentPlayer]
                                + " Gold Coins.");
-
+            inPenaltyBox[currentPlayer] = false;
             boolean winner = didPlayerWin();
             currentPlayer++;
             if (currentPlayer == players.size()) currentPlayer = 0;
@@ -135,7 +138,7 @@ public class GameBetter implements IGame {
 
       } else {
 
-         System.out.println("Answer was corrent!!!!");
+         System.out.println("Answer was correct!!!!");
          purses[currentPlayer]++;
          System.out.println(players.get(currentPlayer)
                             + " now has "
