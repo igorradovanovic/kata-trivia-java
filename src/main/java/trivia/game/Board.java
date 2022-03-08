@@ -7,12 +7,7 @@ import trivia.types.QuestionCategory;
 public class Board {
 
     public static final int PLACES = 12;
-    /**
-     * This method checks for the CategoryType
-     */
-    //Misplaced responsibility. In reality, game has a board too and board has the knowledge about its places
-    //and categories they belong to
-    //Try to present it in code
+
     public QuestionCategory getCurrentCategory(int step) {
         if (step == 0 || step == 4 || step == 8) {
             return QuestionCategory.POP;
